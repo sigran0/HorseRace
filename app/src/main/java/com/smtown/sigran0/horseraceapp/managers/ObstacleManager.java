@@ -1,10 +1,12 @@
-package com.smtown.sigran0.horseraceapp.objects;
+package com.smtown.sigran0.horseraceapp.managers;
 
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.util.Log;
 
+import com.smtown.sigran0.horseraceapp.objects.Obstacle;
+import com.smtown.sigran0.horseraceapp.objects.RectPlayer;
 import com.smtown.sigran0.horseraceapp.tools.Constants;
 
 import java.util.ArrayList;
