@@ -9,6 +9,7 @@ import android.view.SurfaceView;
 
 import com.smtown.sigran0.horseraceapp.managers.SceneManager;
 import com.smtown.sigran0.horseraceapp.threads.MainThread;
+import com.smtown.sigran0.horseraceapp.tools.Constants;
 
 /**
  * Created by jungsungwoo on 11/8/17.
@@ -26,6 +27,8 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
 
     public GamePanel(Context context, AttributeSet attributeSet) {
         super(context, attributeSet);
+
+        Constants.CURRENT_CONTEXT = context;
 
         getHolder().addCallback(this);
 
@@ -69,7 +72,6 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
     @Override
     public boolean onTouchEvent(MotionEvent event){
         //return super.onTouchEvent(event);
-
         manager.recieveTouch(event);
 
         return true;
