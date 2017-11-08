@@ -40,12 +40,7 @@ public class Obstacle implements GameObject{
     }
 
     public boolean playerCollide(RectPlayer player){
-        if(rect.contains(player.getRect().left, player.getRect().top)
-                ||  rect.contains(player.getRect().right, player.getRect().top)
-                ||  rect.contains(player.getRect().left, player.getRect().bottom)
-                ||  rect.contains(player.getRect().right, player.getRect().bottom))
-            return true;
-        return false;
+        return Rect.intersects(rect, player.getRect()) || Rect.intersects(rect2, player.getRect());
     }
 
     @Override

@@ -2,6 +2,7 @@ package com.smtown.sigran0.horseraceapp.objects;
 
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Paint;
 import android.util.Log;
 
 import com.smtown.sigran0.horseraceapp.tools.Constants;
@@ -22,6 +23,9 @@ public class ObstacleManager {
     private int color;
 
     private long startTime;
+    private long initTime;
+
+    private int score = 0;
 
     public ObstacleManager(int playerGap, int obstacleGap, int obstacleHeight, int color) {
 
@@ -30,7 +34,7 @@ public class ObstacleManager {
         this.obstacleHeight = obstacleHeight;
         this.color = color;
 
-        startTime = System.currentTimeMillis();
+        startTime = initTime = System.currentTimeMillis();
 
         obstacles = new ArrayList<>();
 
@@ -48,11 +52,20 @@ public class ObstacleManager {
         }
     }
 
+    public boolean playerCollide(RectPlayer player){
+        for(Obstacle obstacle : obstacles){
+            if(obstacle.playerCollide(player))
+                return true;
+        }
+
+        return false;
+    }
+
     public void update(){
 
         int elapsedTime = (int) (System.currentTimeMillis() - startTime);
         startTime = System.currentTimeMillis();
-        float speed = Constants.SCREEN_HEIGHT / 10000.0f;
+        float speed = (float) Math.sqrt(1 + (startTime - initTime) / 1000.0) * Constants.SCREEN_HEIGHT / (10000.0f);
 
         for(Obstacle obstacle : obstacles){
             obstacle.incrementY(speed * elapsedTime);
@@ -62,6 +75,7 @@ public class ObstacleManager {
             int xStart = (int) (Math.random() * (Constants.SCREEN_WIDTH - playerGap));
             obstacles.add(0, new Obstacle(obstacleHeight, color, xStart, obstacles.get(0).getRect().top - obstacleHeight - obstacleGap, playerGap));
             obstacles.remove(obstacles.size() - 1);
+            score++;
         }
     }
 
@@ -69,5 +83,10 @@ public class ObstacleManager {
 
         for(Obstacle obstacle : obstacles)
             obstacle.draw(canvas);
+
+        Paint paint = new Paint();
+        paint.setTextSize(100);
+        paint.setColor(Color.MAGENTA);
+        canvas.drawText("Score : " + score, 50, 100, paint);
     }
 }
