@@ -92,8 +92,8 @@ public class Sprite {
         mFullImageWidth = width;
         mFullImageHeight = height;
 
-        if(width % mSingleImageWidth != 0 || height % mSingleImageHeight != 0)
-            throw new IllegalArgumentException("Width and height should be 0 that remainder divided by width and height of single image");
+//        if(width % mSingleImageWidth != 0 || height % mSingleImageHeight != 0)
+//            throw new IllegalArgumentException("Width and height should be 0 that remainder divided by width and height of single image");
 
         //Log.d(TAG, "initialize: bitmap width: " + mBlob.getWidth() + ", height : " + mBlob.getHeight());
 
@@ -107,8 +107,6 @@ public class Sprite {
                 mSpriteImageIndex.add(imageIndex);
             }
         }
-
-        ImageIndex first = mSpriteImageIndex.get(0);
 
         mRectSrc = new Rect(300, 0, 600, 300);
         mRectDst = new Rect(0, 0, 300, 300);
@@ -140,7 +138,6 @@ public class Sprite {
 //        mRectSrc.set(targetIndex.getX(), targetIndex.getY(), targetIndex.getWidth(), targetIndex.getHeight());
 //        mRectDst.set(0, 0, 100, 100);
 //        mRectDst.set(targetIndex.getX(), targetIndex.getY(), targetIndex.getWidth(), targetIndex.getHeight());
-
         float dpi = MyTool.getInstance().getDpi();
 
         ImageIndex targetIndex = mSpriteImageIndex.get(mCurrentImageIndex);

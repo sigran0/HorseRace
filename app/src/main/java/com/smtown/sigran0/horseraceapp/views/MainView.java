@@ -2,8 +2,6 @@ package com.smtown.sigran0.horseraceapp.views;
 
 import android.content.Context;
 import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
 import android.graphics.PorterDuff;
 import android.os.Handler;
 import android.util.AttributeSet;
@@ -14,7 +12,7 @@ import android.view.SurfaceView;
 
 import com.smtown.sigran0.horseraceapp.MainActivity;
 import com.smtown.sigran0.horseraceapp.objects.Horse;
-import com.smtown.sigran0.horseraceapp.threads.MainThread;
+import com.smtown.sigran0.horseraceapp.threads.MainThreadBefore;
 import com.smtown.sigran0.horseraceapp.tools.ScreenConfig;
 
 /**
@@ -24,19 +22,16 @@ import com.smtown.sigran0.horseraceapp.tools.ScreenConfig;
 public class MainView extends SurfaceView implements SurfaceHolder.Callback {
 
     private static final String TAG = "MainView";
+    private static final int HORSE_SIZE = 100;
 
     private MainActivity m_main_activity;
-    private MainThread m_main_thread;
+    private MainThreadBefore m_main_thread;
     private Handler m_handler;
     private Context m_context;
     private boolean m_draw_cls = false;
     private ScreenConfig m_screen_config;
 
-    private Horse m_horse1;
-    private Horse m_horse2;
-    private Horse m_horse3;
-    private Horse m_horse4;
-    private Horse m_horse5;
+    private Horse[] m_horses = new Horse[HORSE_SIZE];
 
     public MainView(Context context){
         this(context, null);
@@ -46,7 +41,7 @@ public class MainView extends SurfaceView implements SurfaceHolder.Callback {
         super(context, attrs);
 
         getHolder().addCallback(this);
-        m_main_thread = new MainThread(getHolder(), this);
+        m_main_thread = new MainThreadBefore(getHolder(), this);
         setFocusable(true);
         m_context = context;
     }
@@ -58,11 +53,20 @@ public class MainView extends SurfaceView implements SurfaceHolder.Callback {
         m_screen_config.setSize(width, height);
         m_draw_cls = true;
 
-        m_horse1 = new Horse(0, 0);
-        m_horse2 = new Horse(0, 200);
-        m_horse3 = new Horse(0, 400);
-        m_horse4 = new Horse(0, 600);
-        m_horse5 = new Horse(0, 800);
+        for(int c = 0; c < HORSE_SIZE; c++){
+            m_horses[c] = new Horse(0, c * 150);
+        }
+    }
+
+    public void nextTick(){
+
+        for(int c = 0; c < HORSE_SIZE; c++){
+            m_horses[c].setPosition(m_horses[c].getXPosiotion() + (10 + c * 5), m_horses[c].getYPosition());
+
+            if(m_horses[c].getXPosiotion() >= this.getWidth()) {
+                m_horses[c].setPosition(0, m_horses[c].getYPosition());
+            }
+        }
     }
 
     @Override
@@ -73,60 +77,10 @@ public class MainView extends SurfaceView implements SurfaceHolder.Callback {
 
         canvas.drawColor(0, PorterDuff.Mode.CLEAR);
 
-        m_horse1.setX(m_horse1.getX() + 10);
-        m_horse1.getSprite().setX(m_horse1.getX() + 10);
-
-        if(m_horse1.getX() >= canvas.getWidth()) {
-            m_horse1.setX(0);
-            m_horse1.getSprite().setX(0);
+        for(int c = 0; c < HORSE_SIZE; c++){
+            m_horses[c].setNextImage();
+            m_horses[c].getSprite().onDraw(canvas);
         }
-
-        m_horse1.setNextImage();
-        m_horse1.getSprite().onDraw(canvas);
-
-        m_horse2.setX(m_horse2.getX() + 15);
-        m_horse2.getSprite().setX(m_horse2.getX() + 15);
-
-        if(m_horse2.getX() >= canvas.getWidth()) {
-            m_horse2.setX(0);
-            m_horse2.getSprite().setX(0);
-        }
-
-        m_horse2.setNextImage();
-        m_horse2.getSprite().onDraw(canvas);
-
-        m_horse3.setX(m_horse3.getX() + 20);
-        m_horse3.getSprite().setX(m_horse3.getX() + 20);
-
-        if(m_horse3.getX() >= canvas.getWidth()) {
-            m_horse3.setX(0);
-            m_horse3.getSprite().setX(0);
-        }
-
-        m_horse3.setNextImage();
-        m_horse3.getSprite().onDraw(canvas);
-
-        m_horse4.setX(m_horse4.getX() + 25);
-        m_horse4.getSprite().setX(m_horse4.getX() + 25);
-
-        if(m_horse4.getX() >= canvas.getWidth()) {
-            m_horse4.setX(0);
-            m_horse4.getSprite().setX(0);
-        }
-
-        m_horse4.setNextImage();
-        m_horse4.getSprite().onDraw(canvas);
-
-        m_horse5.setX(m_horse5.getX() + 30);
-        m_horse5.getSprite().setX(m_horse5.getX() + 30);
-
-        if(m_horse5.getX() >= canvas.getWidth()) {
-            m_horse5.setX(0);
-            m_horse5.getSprite().setX(0);
-        }
-
-        m_horse5.setNextImage();
-        m_horse5.getSprite().onDraw(canvas);
     }
 
     @Override
@@ -140,7 +94,7 @@ public class MainView extends SurfaceView implements SurfaceHolder.Callback {
 
         try {
             if(m_main_thread.getState() == Thread.State.TERMINATED) {
-                m_main_thread = new MainThread(getHolder(), this);
+                m_main_thread = new MainThreadBefore(getHolder(), this);
                 m_main_thread.setRunning(true);
                 setFocusable(true);
                 m_main_thread.start();

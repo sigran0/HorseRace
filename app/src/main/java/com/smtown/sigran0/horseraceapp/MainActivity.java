@@ -7,9 +7,14 @@ import android.util.Log;
 import android.view.Window;
 import android.view.WindowManager;
 
+import com.smtown.sigran0.horseraceapp.tools.BitmapProvider;
+import com.smtown.sigran0.horseraceapp.tools.MyTool;
+import com.smtown.sigran0.horseraceapp.views.GamePanel;
 import com.smtown.sigran0.horseraceapp.views.MainView;
 
 public class MainActivity extends Activity {
+    
+    private static final String TAG = "fucking";
 
     MainView mainView;
 
@@ -19,14 +24,17 @@ public class MainActivity extends Activity {
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
-        setContentView(R.layout.activity_main);
+        setContentView(new GamePanel(this));
+
+        //Log.d("fucking", "onCreate: Horse Bitmap : " + BitmapProvider.HorseBitmap);
+        //Log.d(TAG, "onCreate: dpi : " + MyTool.getInstance().getDpi());
 
         int screenWidth = getWindowManager().getDefaultDisplay().getWidth();
         int screenHeight = getWindowManager().getDefaultDisplay().getHeight();
 
-        mainView = (MainView) findViewById(R.id.a_main_main_view);
+        //mainView = (MainView) findViewById(R.id.a_main_main_view);
 
         Log.e("Start", "Start...");
-        mainView.init(screenWidth, screenHeight, this);
+        //mainView.init(screenWidth, screenHeight, this);
     }
 }

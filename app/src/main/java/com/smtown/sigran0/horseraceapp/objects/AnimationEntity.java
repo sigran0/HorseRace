@@ -6,7 +6,7 @@ import android.graphics.Bitmap;
  * Created by jungsungwoo on 11/6/17.
  */
 
-public class AnimationEntity extends Entity {
+public abstract class AnimationEntity extends Entity {
 
     protected boolean mPauseAnimation;
     protected int mImageIndex = 0;
@@ -35,6 +35,22 @@ public class AnimationEntity extends Entity {
         mSprite = new Sprite(bitmap, singleWidth, singleHeight);
         mSprite.setX(pX);
         mSprite.setY(pY);
+    }
+
+    public void setPosition(int x, int y){
+
+        setX(x);
+        setY(y);
+        mSprite.setX(x);
+        mSprite.setY(y);
+    }
+
+    public int getXPosiotion(){
+        return getX();
+    }
+
+    public int getYPosition(){
+        return getY();
     }
 
     public Sprite getSprite(){

@@ -6,29 +6,29 @@ import android.graphics.Rect;
  * Created by jungsungwoo on 11/6/17.
  */
 
-public class Entity {
+public abstract class Entity {
 
     protected int mPositionX;
     protected int mPositionY;
     protected Rect mRect;
 
-    public int getX(){
+    protected int getX(){
         return mPositionX;
     }
 
-    public int getY() {
+    protected int getY() {
         return mPositionY;
     }
 
-    public void setX(int x){
+    protected void setX(int x){
         mPositionX = x;
     }
 
-    public void setY(int y){
+    protected void setY(int y){
         mPositionY = y;
     }
 
-    public Rect getRect() {
+    protected Rect getRect() {
         return mRect;
     }
 

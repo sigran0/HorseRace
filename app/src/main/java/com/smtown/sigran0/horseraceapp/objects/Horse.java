@@ -4,6 +4,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 
 import com.smtown.sigran0.horseraceapp.R;
+import com.smtown.sigran0.horseraceapp.tools.BitmapProvider;
 import com.smtown.sigran0.horseraceapp.tools.MyTool;
 
 import java.util.ArrayList;
@@ -24,7 +25,7 @@ public class Horse extends AnimationEntity {
     }
 
     public Horse(int pX, int pY){
-        super(pX, pY, R.drawable.sprite_horse);
+        super(pX, pY, BitmapProvider.HorseBitmap, 100, 100);
         initialize();
     }
 
@@ -42,4 +43,6 @@ public class Horse extends AnimationEntity {
         else
             mSprite.setImageIndex(mSprite.getImageIndex() + 1);
     }
+
+
 }
