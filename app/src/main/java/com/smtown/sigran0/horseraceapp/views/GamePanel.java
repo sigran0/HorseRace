@@ -10,6 +10,7 @@ import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
+import com.smtown.sigran0.horseraceapp.objects.ObstacleManager;
 import com.smtown.sigran0.horseraceapp.objects.RectPlayer;
 import com.smtown.sigran0.horseraceapp.threads.MainThread;
 
@@ -21,6 +22,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
 
     private MainThread thread;
 
+    private ObstacleManager obstacleManager;
     private RectPlayer player;
     private Point playerPoint;
 
@@ -37,6 +39,8 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
 
         player = new RectPlayer(new Rect(100, 100, 200, 200), Color.RED);
         playerPoint = new Point(150, 150);
+
+        obstacleManager = new ObstacleManager(200, 350, 75, Color.BLACK);
 
         setFocusable(true);
     }
@@ -89,10 +93,13 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
         super.draw(canvas);
 
         canvas.drawColor(Color.WHITE);
+        obstacleManager.draw(canvas);
         player.draw(canvas);
+
     }
 
     public void update(){
+        obstacleManager.update();
         player.update(playerPoint);
     }
 }

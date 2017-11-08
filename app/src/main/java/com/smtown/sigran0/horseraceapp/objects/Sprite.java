@@ -19,8 +19,6 @@ import java.util.ArrayList;
 
 public class Sprite {
 
-    private static final String TAG = "fucking";
-
     private Bitmap mBlob;
     //private MainView mMainView;
 
