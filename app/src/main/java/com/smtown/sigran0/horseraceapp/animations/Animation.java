@@ -58,7 +58,7 @@ public class Animation {
         if(rect.width() > rect.height()){
             rect.left = rect.right - (int) (rect.height() * whRatio);
         } else
-            rect.top = rect.bottom - (int) (rect.width() * whRatio);
+            rect.top = rect.bottom - (int) (rect.width() * (1 / whRatio));
     }
 
     public void update(){
