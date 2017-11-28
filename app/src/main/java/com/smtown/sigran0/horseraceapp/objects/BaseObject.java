@@ -45,7 +45,7 @@ public abstract class BaseObject {
     }
 
     public boolean isCollisionWithObject(BaseObject object){
-        return mRect.intersect(object.mRect);
+        return RectF.intersects(object.mRect, mRect);
     }
 
     public void setPosition(float x, float y){

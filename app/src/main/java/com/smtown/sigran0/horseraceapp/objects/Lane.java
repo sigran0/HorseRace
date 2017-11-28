@@ -24,8 +24,10 @@ public class Lane extends BaseObject{
     private FinishLine mFinishLine;
     private boolean mIsArrived;
     private Paint mPaint;
+    private OnArrivedEvent mArraivedEvent;
+    private int mLaneNumber;
 
-    public Lane(@NonNull RectF rect, PointF point){
+    public Lane(@NonNull RectF rect, PointF point, int laneNumber){
         super(rect, point);
 
         setBasePosition(BasePosition.LEFT_TOP);
@@ -35,6 +37,8 @@ public class Lane extends BaseObject{
         //int color = Color.BLACK;
         mPaint = new Paint();
         mPaint.setColor(color);
+
+        mLaneNumber = laneNumber;
     }
 
     @Override
@@ -64,11 +68,15 @@ public class Lane extends BaseObject{
     public void update(){
 
         if(mHorse.isCollisionWithObject(mFinishLine)) {
-            Log.d(TAG, "Goal");
-            mHorse.setCurrentSpeed(0);
+            mHorse.setFinish();
+            mArraivedEvent.onArrived(mLaneNumber);
         } else {
             mHorse.update();
         }
+    }
+
+    public void setArraivedEvent(OnArrivedEvent event){
+        mArraivedEvent = event;
     }
 
     public void setLaneHorse(Horse horse){
@@ -80,6 +88,6 @@ public class Lane extends BaseObject{
     }
 
     public interface OnArrivedEvent{
-        public void onArrived();
+        public void onArrived(int laneNumber);
     }
 }

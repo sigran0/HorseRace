@@ -27,11 +27,13 @@ public class World implements GameScene {
     
     private static final String TAG = "fucking";
 
-    private static final int MAX_HOSRES = 2;
-    private static final int MAX_LANE_HEIGHT = 128;
+    private static final int MAX_HOSRES = 8;
+    private static final int MAX_LANE_HEIGHT = 64;
 
     private Size mPanelSize;
     private Context mContext;
+
+    private boolean mIsArrived;
 
     private List<Lane> mLaneList = new ArrayList<>();
     private List<Horse> mHorseList = new ArrayList<>();
@@ -62,6 +64,14 @@ public class World implements GameScene {
         if (mPanelSize.getHeight() > laneHeightSum)
             laneMargin = (mPanelSize.getHeight() - laneHeightSum) / (MAX_HOSRES + 1);
 
+        Lane.OnArrivedEvent arrivedEvent = new Lane.OnArrivedEvent() {
+            @Override
+            public void onArrived(int laneNumber) {
+                Log.d(TAG, "Lane " + laneNumber + " is arrived!");
+                mIsArrived = true;
+            }
+        };
+
 
         //  Initialize Horses and lanes
         for (int c = 0; c < MAX_HOSRES; c++) {
@@ -85,10 +95,11 @@ public class World implements GameScene {
             RectF laneRect = new RectF(0, laneStartY, laneWidth, laneStartY + laneHeight);
             PointF lanePoint = new PointF(0, laneStartY);
 
-            Lane lane = new Lane(laneRect, lanePoint);
+            Lane lane = new Lane(laneRect, lanePoint, c);
 
             lane.setLaneFinishLine(finishLine);
             lane.setLaneHorse(horse);
+            lane.setArraivedEvent(arrivedEvent);
 
             mLaneList.add(lane);
             mHorseList.add(horse);
@@ -98,8 +109,9 @@ public class World implements GameScene {
     @Override
     public void update(){
 
-        for(Lane lane : mLaneList)
-            lane.update();
+        if(!mIsArrived)
+            for(Lane lane : mLaneList)
+                lane.update();
     }
 
     @Override

@@ -5,6 +5,8 @@ import android.graphics.Point;
 import android.view.Display;
 import android.view.WindowManager;
 
+import java.util.Random;
+
 /**
  * Created by jungsungwoo on 11/21/17.
  */
@@ -13,6 +15,7 @@ public class MyTools {
 
     private static Context mContext;
     private static MyTools instance;
+    private static Random random = new Random();
 
     private int mScreenWidth = -1;
     private int mScreenHeight = -1;
@@ -47,6 +50,11 @@ public class MyTools {
         if(mScreenWidth < 0 || mScreenHeight < 0)
             getScreenSize();
         return mScreenHeight;
+    }
+
+    public float getRangeFloat(float min, float max){
+
+        return (random.nextFloat() * (max - min)) + min;
     }
 
     private void getScreenSize() throws NullPointerException{

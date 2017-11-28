@@ -14,7 +14,7 @@ public class MainThread extends Thread{
     
     private static final String TAG = "good";
 
-    public static final int MAX_FPS = 60;
+    public static final int MAX_FPS = 30;
 
     private double averageFPS;
     private SurfaceHolder mSurfaceHolder;
