@@ -2,88 +2,129 @@ package com.smtown.sigran0.horseraceapp.views;
 
 import android.content.Context;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.util.AttributeSet;
+import android.util.Log;
+import android.util.Size;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
-import com.smtown.sigran0.horseraceapp.managers.SceneManager;
+import com.smtown.sigran0.horseraceapp.scences.World;
 import com.smtown.sigran0.horseraceapp.threads.MainThread;
-import com.smtown.sigran0.horseraceapp.tools.Constants;
+import com.smtown.sigran0.horseraceapp.tools.MyTools;
 
 /**
- * Created by jungsungwoo on 11/8/17.
+ * Created by jungsungwoo on 11/20/17.
  */
 
-public class GamePanel extends SurfaceView implements SurfaceHolder.Callback {
+public class GamePanel extends SurfaceView implements SurfaceHolder.Callback{
+    
+    private static final String TAG = "fucking";
 
-    private MainThread thread;
+    private MainThread mMainThread;
+    private boolean isViewAttached = false;
+    private MyTools tools;
+    private World mWorld;
 
-    private SceneManager manager;
-
-    public GamePanel(Context context) {
-        this(context, null);
+    public GamePanel(Context conetxt){
+        this(conetxt, null);
     }
 
-    public GamePanel(Context context, AttributeSet attributeSet) {
-        super(context, attributeSet);
+    public GamePanel(final Context context, AttributeSet attrs){
 
-        Constants.CURRENT_CONTEXT = context;
+        super(context, attrs);
+
+        tools = MyTools.getInstance();
 
         getHolder().addCallback(this);
 
-        thread = new MainThread(getHolder(), this);
-
-        manager = new SceneManager();
+        mMainThread = new MainThread(getHolder(), this);
 
         setFocusable(true);
     }
 
+    private Size measurePanelSize(){
+        int screenWidth, screenHeight, panelWidth, panelHeight;
+
+        screenWidth = tools.getScreenWidth();
+        screenHeight = tools.getScreenHeight();
+
+        panelWidth = this.getWidth();
+        panelHeight = this.getHeight();
+
+        Size panelSize = new Size(panelWidth, panelHeight);
+
+        Log.d(TAG, String.format("ScreenSize : (%d, %d), PanelSize : (%d, %d)", screenWidth, screenHeight, panelWidth, panelHeight));
+
+        return panelSize;
+    }
+
     @Override
     public void surfaceChanged(SurfaceHolder holder, int format, int width, int height){
-
+        Log.d(TAG, "surfaceChanged called");
     }
 
     @Override
     public void surfaceCreated(SurfaceHolder holder){
 
-        thread = new MainThread(getHolder(), this);
+        Log.d(TAG, "surfaceCreated called");
 
-        thread.setRunning(true);
-        thread.start();
+        mMainThread = new MainThread(getHolder(), this);
+
+        mMainThread.setRunning(true);
+        mMainThread.start();
+
+        Size panelSize = measurePanelSize();
+
+        mWorld = new World(getContext(), panelSize);
+
+        setViewAttached(true);
     }
 
     @Override
     public void surfaceDestroyed(SurfaceHolder holder){
+        Log.d(TAG, "surfaceDestroyed called");
 
         boolean retry = true;
-        while(true){
+        while(retry){
             try {
-                thread.setRunning(false);
-                thread.join();
+                mMainThread.setRunning(false);
+                mMainThread.join();
+
+                retry = false;
             } catch (Exception e) {
                 e.printStackTrace();
             }
-
-            retry = false;
         }
+
+        mWorld.destroy();
+        Log.d(TAG, "surfaceDestroyed end");
     }
 
     @Override
     public boolean onTouchEvent(MotionEvent event){
-        //return super.onTouchEvent(event);
-        manager.recieveTouch(event);
 
         return true;
     }
 
     @Override
     public void draw(Canvas canvas){
-        super.draw(canvas);
-        manager.draw(canvas);
+        if(isViewAttached) {
+            super.draw(canvas);
+            canvas.drawColor(Color.WHITE);
+
+            mWorld.draw(canvas);
+        }
     }
 
     public void update(){
-        manager.update();
+        if(isViewAttached) {
+            mWorld.update();
+        }
+    }
+
+    public void setViewAttached(boolean viewAttached){
+        isViewAttached = viewAttached;
     }
 }

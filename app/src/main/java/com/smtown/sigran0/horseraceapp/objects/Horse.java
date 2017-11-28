@@ -1,48 +1,73 @@
 package com.smtown.sigran0.horseraceapp.objects;
 
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-
-import com.smtown.sigran0.horseraceapp.R;
-import com.smtown.sigran0.horseraceapp.tools.BitmapProvider;
-import com.smtown.sigran0.horseraceapp.tools.MyTool;
-
-import java.util.ArrayList;
-import java.util.Arrays;
+import android.graphics.Canvas;
+import android.graphics.Paint;
+import android.graphics.Point;
+import android.graphics.PointF;
+import android.graphics.Rect;
+import android.graphics.RectF;
+import android.util.Log;
 
 /**
- * Created by jungsungwoo on 11/6/17.
+ * Created by jungsungwoo on 11/20/17.
  */
 
-public class Horse extends AnimationEntity {
+public class Horse extends BaseObject {
+    
+    private static final String TAG = "Horse";
 
-    //private static Bitmap mHorseBitmap = BitmapFactory.decodeResource(MyTool.getInstance().getApplicationContext().getResources(), R.drawable.sprite_horse);
+    private int mColor;
+    private Paint mPaint;
 
-    ArrayList<Integer> mHorseAnimationIndex = new ArrayList<>();
+    private float mCurrentSpeed;
+    private float mCurrentAcceleration;
 
-    public Horse(){
-        this(0, 0);
+    private int mHorseNumber;
+
+    public Horse(RectF rect, PointF point, int color, int number){
+        super(rect, point);
+
+        mRect = rect;
+        mColor = color;
+        mPaint = new Paint();
+        mPaint.setColor(mColor);
+
+        mHorseNumber = number;
+
+        mCurrentSpeed = 10.0f;
     }
 
-    public Horse(int pX, int pY){
-        super(pX, pY, BitmapProvider.HorseBitmap, 100, 100);
-        initialize();
+    public void setCurrentSpeed(float speed){
+        mCurrentSpeed = speed;
     }
 
-    private void initialize(){
-
-        for(int c = 0; c < 24; c++){
-            mHorseAnimationIndex.add(c);
-        }
+    public void setCurrentAcceleration(float acceleration){
+        mCurrentAcceleration = acceleration;
     }
 
-    public void setNextImage(){
+    @Override
+    public void update(){
+//        mRect.set(mPosition.x - mRect.width() / 2, mPosition.y - mRect.height() / 2,
+//                mPosition.x + mRect.width() / 2, mPosition.y + mRect.height() / 2);
 
-        if(mSprite.getImageIndex() + 1 >= mHorseAnimationIndex.size())
-            mSprite.setImageIndex(mHorseAnimationIndex.get(0));
-        else
-            mSprite.setImageIndex(mSprite.getImageIndex() + 1);
+        mPosition.x += mCurrentSpeed;
+        mRect.set(mPosition.x, mPosition.y, mPosition.x + mRect.width(), mPosition.y + mRect.height());
+
+        Log.d(TAG, String.format("[%d] Position : (%.1f, %.1f), speed : %.1f, Rect : (%.1f, %.1f, %.1f, %.1f)", mHorseNumber, mPosition.x, mPosition.y, mCurrentSpeed, mRect.left, mRect.top, mRect.right, mRect.bottom));
     }
 
+    @Override
+    public void draw(Canvas canvas){
+        canvas.drawRect(mRect, mPaint);
+    }
 
+    @Override
+    public void onCreate(){
+        Log.d(TAG, "onCreate: Hello World!");
+    }
+
+    @Override
+    public void destroy(){
+        Log.d(TAG, "destroy: GoodBye World!");
+    }
 }

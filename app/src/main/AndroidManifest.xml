@@ -3,8 +3,8 @@
     package="com.smtown.sigran0.horseraceapp">
 
     <application
-        android:name=".tools.MyApplication"
         android:allowBackup="true"
+        android:name=".tools.MyApplication"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
@@ -13,7 +13,7 @@
         <activity
             android:name=".MainActivity"
             android:theme="@android:style/Theme.Black.NoTitleBar.Fullscreen"
-            android:screenOrientation="portrait"
+            android:screenOrientation="landscape"
             >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

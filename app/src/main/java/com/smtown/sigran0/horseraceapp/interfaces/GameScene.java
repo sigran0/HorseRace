@@ -4,13 +4,13 @@ import android.graphics.Canvas;
 import android.view.MotionEvent;
 
 /**
- * Created by jungsungwoo on 11/8/17.
+ * Created by jungsungwoo on 11/27/17.
  */
 
-public interface Scene {
+public interface GameScene {
 
     public void update();
     public void draw(Canvas canvas);
-    public void terminate();
-    public void recieveTouch(MotionEvent event);
+    public void onTouchEvent(MotionEvent event);
+    public void destroy();
 }

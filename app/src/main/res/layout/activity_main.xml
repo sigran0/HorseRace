@@ -1,12 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
 
-    <com.smtown.sigran0.horseraceapp.views.MainView
-        android:id="@+id/a_main_main_view"
+    >
+
+    <com.smtown.sigran0.horseraceapp.views.ButtonMenu
+        android:layout_weight="5"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="wrap_content"
+        >
+    </com.smtown.sigran0.horseraceapp.views.ButtonMenu>
+
+    <com.smtown.sigran0.horseraceapp.views.GamePanel
+        android:layout_weight="1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        />
 
 </LinearLayout>

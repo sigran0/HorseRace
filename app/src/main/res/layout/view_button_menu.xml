@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:weightSum="100"
+    android:layout_marginBottom="10dp"
+    >
+
+    <TextView
+        android:id="@+id/view_button_menu_tv_score"
+        android:layout_weight="25"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="1등"
+        android:background="#acbccc"
+        android:paddingTop="30dp"
+        android:paddingBottom="30dp"
+        android:layout_marginTop="10dp"
+        />
+
+    <Button
+        android:id="@+id/view_button_menu_bt_item1"
+        android:layout_weight="25"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Banana"
+        android:background="#acbccc"
+        android:paddingBottom="30dp"
+        android:paddingTop="30dp"
+        android:layout_marginTop="10dp"
+        />
+
+    <Button
+        android:id="@+id/view_button_menu_bt_item2"
+        android:layout_weight="25"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Carrot"
+        android:background="#acbccc"
+        android:paddingBottom="30dp"
+        android:paddingTop="30dp"
+        android:layout_marginTop="10dp"
+        />
+
+    <Button
+        android:id="@+id/view_button_menu_bt_item3"
+        android:layout_weight="25"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Teleport"
+        android:background="#acbccc"
+        android:paddingBottom="30dp"
+        android:paddingTop="30dp"
+        android:layout_marginTop="10dp"
+        />
+
+</LinearLayout>

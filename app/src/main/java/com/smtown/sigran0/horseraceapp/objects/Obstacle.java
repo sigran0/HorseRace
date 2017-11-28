@@ -2,57 +2,58 @@ package com.smtown.sigran0.horseraceapp.objects;
 
 import android.graphics.Canvas;
 import android.graphics.Paint;
+import android.graphics.Point;
+import android.graphics.PointF;
 import android.graphics.Rect;
-
-import com.smtown.sigran0.horseraceapp.interfaces.GameObject;
-import com.smtown.sigran0.horseraceapp.tools.Constants;
+import android.graphics.RectF;
+import android.util.Log;
 
 /**
- * Created by jungsungwoo on 11/8/17.
+ * Created by jungsungwoo on 11/20/17.
  */
 
-public class Obstacle implements GameObject{
+public class Obstacle extends BaseObject {
 
-    private Rect rect;
-    private Rect rect2;
-    private int color;
-    private int startX;
-    private int playerGap;
+    private static final String TAG = "Obstacle";
 
-    public Obstacle(int rectHeight, int color, int startX, int startY, int playerGap){
-        this.color = color;
+    private int mColor;
+    private Paint mPaint;
 
-        //  l, t, r, b
-        rect = new Rect(0, startY, startX, startY + rectHeight);
-        rect2 = new Rect(startX + playerGap, startY, Constants.SCREEN_WIDTH, startY + rectHeight);
+    private static int mObstacleCounter = 0;
+
+    public Obstacle(RectF rect, PointF position, int color){
+        super(rect, position);
+
+        mRect = rect;
+        mColor = color;
+        mPaint = new Paint();
+        mPaint.setColor(mColor);
     }
 
-    public Rect getRect(){
-        return rect;
-    }
+    @Override
+    public void onCreate(){
+        mRect.set(mPosition.x - mRect.width() / 2, mPosition.y - mRect.height() / 2,
+                mPosition.x + mRect.width() / 2, mPosition.y + mRect.height() / 2);
 
-    public void incrementY(float y){
-        rect.top += y;
-        rect.bottom += y;
+        mObstacleCounter += 1;
 
-        rect2.top += y;
-        rect2.bottom += y;
-    }
-
-    public boolean playerCollide(RectPlayer player){
-        return Rect.intersects(rect, player.getRect()) || Rect.intersects(rect2, player.getRect());
+        if(mObstacleCounter % 100 == 0)
+            Log.d(TAG, "onCreate: Obstacle Counter : " + mObstacleCounter);
     }
 
     @Override
     public void draw(Canvas canvas){
-        Paint paint = new Paint();
-        paint.setColor(color);
-        canvas.drawRect(rect, paint);
-        canvas.drawRect(rect2, paint);
+        canvas.drawRect(mRect, mPaint);
     }
 
     @Override
     public void update(){
+        mRect.set(mPosition.x - mRect.width() / 2, mPosition.y - mRect.height() / 2,
+                mPosition.x + mRect.width() / 2, mPosition.y + mRect.height() / 2);
+    }
+
+    @Override
+    public void destroy(){
 
     }
 }
