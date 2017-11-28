@@ -104,6 +104,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback{
 
     @Override
     public boolean onTouchEvent(MotionEvent event){
+        mWorld.onTouchEvent(event);
 
         return true;
     }

@@ -20,18 +20,27 @@ public class FinishLine extends BaseObject {
         mPaint.setColor(color);
     }
 
+    @Override
+    protected void initialize(){
+
+    }
+
+    @Override
     public void onCreate(){
 
     }
 
+    @Override
     public void destroy(){
 
     }
 
+    @Override
     public void draw(Canvas canvas){
         canvas.drawRect(mRect, mPaint);
     }
 
+    @Override
     public void update(){
 
     }

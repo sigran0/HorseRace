@@ -6,6 +6,8 @@ import android.graphics.PointF;
 import android.graphics.Rect;
 import android.graphics.RectF;
 
+import com.smtown.sigran0.horseraceapp.tools.MyTools;
+
 /**
  * Created by jungsungwoo on 11/20/17.
  */
@@ -20,22 +22,26 @@ public abstract class BaseObject {
     protected RectF mRect;
     protected PointF mPosition;
     protected BasePosition mBasePosition = BasePosition.CENTER_CENTER;
+    protected MyTools tools = MyTools.getInstance();
 
     public abstract void onCreate();
     public abstract void destroy();
     public abstract void draw(Canvas canvas);
     public abstract void update();
+    protected abstract void initialize();
 
-    BaseObject(RectF rect, PointF position){
+    protected BaseObject(RectF rect, PointF position){
         mRect = rect;
         mPosition = position;
+
+        initialize();
     }
 
     protected void setBasePosition(BasePosition basePosition){
         mBasePosition = basePosition;
     }
 
-    public boolean isCollisionWithPoint(int x, int y){
+    public boolean isCollisionWithPoint(float x, float y){
 
         if((x > mPosition.x - mRect.width() / 2 && x < mPosition.x + mRect.width() / 2) &&
                 (y > mPosition.y - mRect.height() / 2 && y < mPosition.y + mRect.height() / 2))

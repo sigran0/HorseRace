@@ -6,6 +6,7 @@ import android.view.Display;
 import android.view.WindowManager;
 
 import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * Created by jungsungwoo on 11/21/17.
@@ -54,7 +55,11 @@ public class MyTools {
 
     public float getRangeFloat(float min, float max){
 
-        return (random.nextFloat() * (max - min)) + min;
+        return (Math.abs(random.nextFloat()) * (max - min)) + min;
+    }
+
+    public int getRangeInt(int min, int max){
+        return ThreadLocalRandom.current().nextInt(min, max + 1);
     }
 
     private void getScreenSize() throws NullPointerException{
