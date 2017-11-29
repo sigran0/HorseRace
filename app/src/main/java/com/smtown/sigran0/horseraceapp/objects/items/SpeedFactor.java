@@ -24,12 +24,7 @@ public class SpeedFactor extends Item {
         int minusFactor = tools.getRangeInt(1, 10);
 
         if(minusFactor > 8)
-            mForceSize *= -1;
-
-        if(mForceSize < 0)
-            mPaint.setColor(Color.RED);
-        else
-            mPaint.setColor(Color.YELLOW);
+            mForceSize /= -4;
     }
 
     @Override
@@ -44,7 +39,7 @@ public class SpeedFactor extends Item {
 
     @Override
     public void draw(Canvas canvas){
-        canvas.drawRect(mRect, mPaint);
+
     }
 
     @Override

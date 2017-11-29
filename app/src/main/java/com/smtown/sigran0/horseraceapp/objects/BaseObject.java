@@ -6,6 +6,7 @@ import android.graphics.PointF;
 import android.graphics.Rect;
 import android.graphics.RectF;
 
+import com.smtown.sigran0.horseraceapp.managers.BinderManager;
 import com.smtown.sigran0.horseraceapp.tools.MyTools;
 
 /**
@@ -23,6 +24,7 @@ public abstract class BaseObject {
     protected PointF mPosition;
     protected BasePosition mBasePosition = BasePosition.CENTER_CENTER;
     protected MyTools tools = MyTools.getInstance();
+    protected BinderManager binderManager = BinderManager.getInstance();
 
     public abstract void onCreate();
     public abstract void destroy();

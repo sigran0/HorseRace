@@ -3,7 +3,6 @@ package com.smtown.sigran0.horseraceapp.objects;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.PointF;
-import android.graphics.Rect;
 import android.graphics.RectF;
 import android.support.annotation.NonNull;
 import android.util.Log;
@@ -11,10 +10,9 @@ import android.util.SparseArray;
 
 import com.smtown.sigran0.horseraceapp.objects.items.Item;
 import com.smtown.sigran0.horseraceapp.objects.items.SpeedFactor;
+import com.smtown.sigran0.horseraceapp.objects.items.LastIndex;
 import com.smtown.sigran0.horseraceapp.tools.Constants;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Random;
 
 /**
@@ -31,6 +29,7 @@ public class Lane extends BaseObject {
     private Paint mPaint;
     private OnArrivedEvent mArraivedEvent;
     private int mLaneNumber;
+    private LastIndex mItemUsed;
 
     private SparseArray<Item> mItemList = new SparseArray<>();
 
@@ -46,6 +45,7 @@ public class Lane extends BaseObject {
         mPaint.setColor(color);
 
         mLaneNumber = laneNumber;
+        mItemUsed = new LastIndex(mLaneNumber);
 
         initializeLane();
     }
@@ -63,12 +63,16 @@ public class Lane extends BaseObject {
             RectF rect = new RectF(randomPositionX, laneY, randomPositionX + Constants.LANE_HEIGHT, laneY + Constants.LANE_HEIGHT);
             PointF point = new PointF(randomPositionX, laneY);
 
-            Log.d(TAG, String.format("RandomPositionX : %.2f, Rect : (%.2f %.2f %.2f %.2f), Point : (%.2f %.2f)", randomPositionX, rect.left, rect.top, rect.right, rect.bottom, point.x, point.y));
+            //Log.d(TAG, String.format("RandomPositionX : %.2f, Rect : (%.2f %.2f %.2f %.2f), Point : (%.2f %.2f)", randomPositionX, rect.left, rect.top, rect.right, rect.bottom, point.x, point.y));
 
             SpeedFactor speedFactor = new SpeedFactor(rect, point);
 
             mItemList.append(c, speedFactor);
         }
+    }
+
+    public void setLastLane(boolean b){
+        mHorse.setLastHorse(b);
     }
 
     @Override
@@ -104,6 +108,10 @@ public class Lane extends BaseObject {
 
             item.draw(canvas);
         }
+    }
+
+    public void updateSecond(int second){
+        mHorse.updateSecond(second);
     }
 
     @Override
@@ -148,8 +156,20 @@ public class Lane extends BaseObject {
         mHorse = horse;
     }
 
+    public void setLaneItemUsed(boolean b){
+        mHorse.setItemUsed(b);
+    }
+
+    public boolean getLaneItemUsed(){
+        return mHorse.getItemUsed();
+    }
+
     public void setLaneFinishLine(FinishLine finishLine){
         mFinishLine = finishLine;
+    }
+
+    public LastIndex getItemUsed(){
+        return mItemUsed;
     }
 
     public interface OnArrivedEvent{

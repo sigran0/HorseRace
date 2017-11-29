@@ -10,6 +10,7 @@ import android.view.MotionEvent;
 public interface GameScene {
 
     public void update();
+    public void updateSecond(int second);
     public void draw(Canvas canvas);
     public void onTouchEvent(MotionEvent event);
     public void destroy();

@@ -14,7 +14,7 @@ public class MainThread extends Thread{
     
     private static final String TAG = "good";
 
-    public static final int MAX_FPS = 30;
+    public static final int MAX_FPS = 16;
 
     private double averageFPS;
     private SurfaceHolder mSurfaceHolder;
@@ -42,6 +42,7 @@ public class MainThread extends Thread{
         long targetTime = 1000 / MAX_FPS;
 
         long beforeTime = 0;
+        int second = 0;
 
         while(mOnRunning){
             startTime = System.nanoTime();
@@ -79,12 +80,15 @@ public class MainThread extends Thread{
             frameCount++;
 
             if(frameCount == MAX_FPS) {
+                second += 1;
                 averageFPS = 1000 / ((totalTime / frameCount) / 1000000);
                 frameCount = 0;
                 totalTime = 0;
                 //Log.d(TAG, "run: " + averageFPS + ", before Time : " + ((System.nanoTime() - beforeTime) / 1000000) / 1000.0f);
-
                 beforeTime = System.nanoTime();
+
+                mGamePanel.updateSecond(second);
+                //Log.d(TAG, String.format("new tick : %d", second));
             }
         }
     }

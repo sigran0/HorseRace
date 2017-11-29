@@ -119,6 +119,12 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback{
         }
     }
 
+    public void updateSecond(int second){
+        if(isViewAttached) {
+            mWorld.updateSecond(second);
+        }
+    }
+
     public void update(){
         if(isViewAttached) {
             mWorld.update();

@@ -12,9 +12,11 @@ import android.util.Size;
 import android.view.MotionEvent;
 
 import com.smtown.sigran0.horseraceapp.interfaces.GameScene;
+import com.smtown.sigran0.horseraceapp.managers.BinderManager;
 import com.smtown.sigran0.horseraceapp.objects.FinishLine;
 import com.smtown.sigran0.horseraceapp.objects.Horse;
 import com.smtown.sigran0.horseraceapp.objects.Lane;
+import com.smtown.sigran0.horseraceapp.objects.items.LastIndex;
 import com.smtown.sigran0.horseraceapp.tools.Constants;
 
 import java.util.ArrayList;
@@ -28,7 +30,7 @@ public class World implements GameScene {
     
     private static final String TAG = "fucking";
 
-    private static final int MAX_HOSRES = 6;
+    private static final int MAX_HOSRES = 4;
     private static final int MAX_LANE_HEIGHT = 128;
 
     private Size mPanelSize;
@@ -40,6 +42,10 @@ public class World implements GameScene {
     private List<Integer> mArrivedList = new ArrayList<>();
 
     private boolean mIsGameOver = false;
+    private int mLastIndex = -1;
+    private boolean mIsLastChanged = false;
+
+    private BinderManager binderManager = BinderManager.getInstance();
 
     public World(Context context, Size panelSize){
         mPanelSize = panelSize;
@@ -94,7 +100,7 @@ public class World implements GameScene {
             RectF finishRect = new RectF(laneWidth - horseWidth, laneStartY, laneWidth, laneStartY + laneHeight);
             PointF finishPoint = new PointF(laneWidth - horseWidth, laneStartY);
 
-            FinishLine finishLine = new FinishLine(finishRect, finishPoint, Color.BLUE);
+            FinishLine finishLine = new FinishLine(finishRect, finishPoint, Color.BLUE, c);
 
             //  Create Lane
             RectF laneRect = new RectF(0, laneStartY, laneWidth, laneStartY + laneHeight);
@@ -124,6 +130,11 @@ public class World implements GameScene {
             }
         }
 
+        if(minIndex != mLastIndex){
+            mIsLastChanged = true;
+            mLastIndex = minIndex;
+        }
+
         return minIndex;
     }
 
@@ -138,6 +149,15 @@ public class World implements GameScene {
     }
 
     @Override
+    public void updateSecond(int second){
+
+        for(Lane lane : mLaneList) {
+            if(!lane.getArrived())
+                lane.updateSecond(second);
+        }
+    }
+
+    @Override
     public void update(){
 
         boolean isEnd = isAllHorseArrived();
@@ -145,7 +165,21 @@ public class World implements GameScene {
         if(!isEnd) {
             int c = 0;
             int lastHorse = getLastHorse();
+            if(mIsLastChanged){
+                mIsLastChanged = false;
+                LastIndex index = new LastIndex(mLastIndex);
+                boolean itemUsed = mLaneList.get(mLastIndex).getLaneItemUsed();
+                index.setItemUsed(itemUsed);
+                binderManager.startUpdate("scoreChanged", index);
+                //Log.d(TAG, String.format("Last horse is changed ! %d", mLastIndex));
+            }
+
             for (Lane lane : mLaneList) {
+                if(lastHorse == c){
+                    lane.setLastLane(true);
+                } else {
+                    lane.setLastLane(false);
+                }
                 lane.update();
                 if(mDebugTargetIndex == c)
                     lane.debugLog();
@@ -154,6 +188,10 @@ public class World implements GameScene {
 
         } else if(!mIsGameOver){
             mIsGameOver = true;
+            LastIndex index = new LastIndex(mArrivedList.get(mArrivedList.size() - 1));
+            boolean itemUsed = mLaneList.get(mLastIndex).getLaneItemUsed();
+            index.setItemUsed(itemUsed);
+            binderManager.startUpdate("scoreChanged", index);
             Log.d(TAG, String.format("last lane is %d", mArrivedList.get(mArrivedList.size() - 1)));
         }
     }
