@@ -46,8 +46,10 @@ public class FinishLine extends BaseObject {
 
     @Override
     public void draw(Canvas canvas){
-        canvas.drawRect(mRect, mPaint);
-        canvas.drawText(String.format("%d", mIndex), mRect.centerX(), mRect.centerY(), mTextPaint);
+        if(canvas != null) {
+            canvas.drawRect(mRect, mPaint);
+            canvas.drawText(String.format("%d", mIndex), mRect.centerX(), mRect.centerY(), mTextPaint);
+        }
     }
 
     @Override

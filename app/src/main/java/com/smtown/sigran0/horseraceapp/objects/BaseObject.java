@@ -56,6 +56,10 @@ public abstract class BaseObject {
         return RectF.intersects(object.mRect, mRect);
     }
 
+    public PointF getPosition(){
+        return mPosition;
+    }
+
     public void setPosition(float x, float y){
         mPosition = new PointF(x, y);
     }

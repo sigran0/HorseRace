@@ -1,24 +1,39 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="horizontal"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    >
+    android:layout_height="match_parent">
 
-    <com.smtown.sigran0.horseraceapp.views.ButtonMenu
-        android:id="@+id/activity_main_button_menu"
-        android:layout_weight="5"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:orientation="vertical"
         >
-    </com.smtown.sigran0.horseraceapp.views.ButtonMenu>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:textSize="48dp"
+            android:text="Size of horses"
+            />
 
-    <com.smtown.sigran0.horseraceapp.views.GamePanel
-        android:id="@+id/activity_main_game_panel"
-        android:layout_weight="1"
+        <NumberPicker
+            android:id="@+id/number_picker"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            >
+
+        </NumberPicker>
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/start_button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:text="Start"
         />
 
-</LinearLayout>
+</FrameLayout>

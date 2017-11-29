@@ -3,21 +3,22 @@ package com.smtown.sigran0.horseraceapp.scences;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
-import android.graphics.Point;
 import android.graphics.PointF;
-import android.graphics.Rect;
 import android.graphics.RectF;
 import android.util.Log;
 import android.util.Size;
+import android.util.SparseArray;
 import android.view.MotionEvent;
 
 import com.smtown.sigran0.horseraceapp.interfaces.GameScene;
 import com.smtown.sigran0.horseraceapp.managers.BinderManager;
+import com.smtown.sigran0.horseraceapp.managers.DialogManager;
 import com.smtown.sigran0.horseraceapp.objects.FinishLine;
 import com.smtown.sigran0.horseraceapp.objects.Horse;
 import com.smtown.sigran0.horseraceapp.objects.Lane;
 import com.smtown.sigran0.horseraceapp.objects.items.LastIndex;
 import com.smtown.sigran0.horseraceapp.tools.Constants;
+import com.smtown.sigran0.horseraceapp.tools.MyTools;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,8 +30,6 @@ import java.util.List;
 public class World implements GameScene {
     
     private static final String TAG = "fucking";
-
-    private static final int MAX_HOSRES = 4;
     private static final int MAX_LANE_HEIGHT = 128;
 
     private Size mPanelSize;
@@ -40,17 +39,25 @@ public class World implements GameScene {
 
     private List<Lane> mLaneList = new ArrayList<>();
     private List<Integer> mArrivedList = new ArrayList<>();
+    private SparseArray<Integer> mNotArrivedList = new SparseArray<>();
+    private SparseArray<Integer> mArrivedTempList = new SparseArray<>();
 
+    private  int mHorseSize;
     private boolean mIsGameOver = false;
+    private boolean mIsStart = false;
     private int mLastIndex = -1;
     private boolean mIsLastChanged = false;
+    private MyTools tools = MyTools.getInstance();
+    private int mCurrentRanking = 1;
 
     private BinderManager binderManager = BinderManager.getInstance();
 
-    public World(Context context, Size panelSize){
+    public World(Context context, Size panelSize, int horseSize){
+        mHorseSize = horseSize;
         mPanelSize = panelSize;
         mContext = context;
 
+        mIsStart = true;
         initializeWorld();
     }
 
@@ -58,7 +65,7 @@ public class World implements GameScene {
 
         //  Initialize related sizes
         int laneWidth = mPanelSize.getWidth();
-        int laneHeight = mPanelSize.getHeight() / MAX_HOSRES;
+        int laneHeight = mPanelSize.getHeight() / mHorseSize;
 
         if (laneHeight > MAX_LANE_HEIGHT) {
             laneHeight = MAX_LANE_HEIGHT;
@@ -67,16 +74,18 @@ public class World implements GameScene {
         int horseWidth = laneHeight;
         int horseHeight = laneHeight;
 
-        int laneHeightSum = laneHeight * MAX_HOSRES;
+        int laneHeightSum = laneHeight * mHorseSize;
         int laneMargin = 0;
 
         if (mPanelSize.getHeight() > laneHeightSum)
-            laneMargin = (mPanelSize.getHeight() - laneHeightSum) / (MAX_HOSRES + 1);
+            laneMargin = (mPanelSize.getHeight() - laneHeightSum) / (mHorseSize + 1);
 
         Lane.OnArrivedEvent arrivedEvent = new Lane.OnArrivedEvent() {
             @Override
             public void onArrived(int laneNumber) {
                 Log.d(TAG, "Lane " + laneNumber + " is arrived!");
+                //mArrivedTempList.append(laneNumber, laneNumber);
+                mNotArrivedList.remove(laneNumber);
                 mArrivedList.add(laneNumber);
             }
         };
@@ -85,10 +94,12 @@ public class World implements GameScene {
         Constants.LANE_HEIGHT = laneHeight;
 
         //  Initialize Horses and lanes
-        for (int c = 0; c < MAX_HOSRES; c++) {
+        for (int c = 0; c < mHorseSize; c++) {
             float laneStartY = laneHeight * c + laneMargin * (c + 1);
 
-            Log.d(TAG, String.format("Lane Size : (%d, %d)", horseWidth, horseHeight));
+            //Log.d(TAG, String.format("Lane Size : (%d, %d)", horseWidth, horseHeight));
+
+            mNotArrivedList.append(c, c);
 
             //  Create Horse
             RectF horseRect = new RectF(0, 0, horseWidth, horseHeight);
@@ -114,6 +125,24 @@ public class World implements GameScene {
 
             mLaneList.add(lane);
         }
+
+        binderManager.bind("slow", new BinderManager.BinderInterface<Integer>() {
+            @Override
+            public void update(Integer data) {
+                Integer target = getRandomNotArrivedLane(data);
+                mLaneList.get(data).setLaneItemUsed(true);
+                mLaneList.get(target).setSlow();
+            }
+        });
+
+        binderManager.bind("teleport", new BinderManager.BinderInterface<Integer>() {
+            @Override
+            public void update(Integer data) {
+                Integer target = getRandomNotArrivedLane(data);
+                mLaneList.get(data).setLaneItemUsed(true);
+                mLaneList.get(data).switchPosition(mLaneList.get(target));
+            }
+        });
     }
 
     private int getLastHorse(){
@@ -148,59 +177,111 @@ public class World implements GameScene {
         return true;
     }
 
+    private Integer getRandomNotArrivedLane(int myIndex){
+
+        if(mNotArrivedList.size() < 0)
+            return null;
+        int randIndex = -1;
+        do {
+            Log.d(TAG, String.format("Not Arrived size : %d", mNotArrivedList.size()));
+            randIndex = tools.getRangeInt(0, mNotArrivedList.size() - 1);
+        } while(randIndex == myIndex);
+
+        return new Integer(randIndex);
+    }
+
     @Override
     public void updateSecond(int second){
 
-        for(Lane lane : mLaneList) {
-            if(!lane.getArrived())
-                lane.updateSecond(second);
+        if(mIsStart) {
+            for (Lane lane : mLaneList) {
+                if (!lane.getArrived())
+                    lane.updateSecond(second);
+            }
         }
     }
 
     @Override
     public void update(){
 
-        boolean isEnd = isAllHorseArrived();
+        Log.d(TAG, String.format("Not Arrived : %d", mNotArrivedList.size()));
 
-        if(!isEnd) {
-            int c = 0;
-            int lastHorse = getLastHorse();
-            if(mIsLastChanged){
-                mIsLastChanged = false;
-                LastIndex index = new LastIndex(mLastIndex);
+        if(mIsStart) {
+
+            boolean isEnd = isAllHorseArrived();
+
+            if (!isEnd) {
+                int c = 0;
+                int lastHorse = getLastHorse();
+                if (mIsLastChanged) {
+                    mIsLastChanged = false;
+                    LastIndex index = new LastIndex(mLastIndex);
+                    boolean itemUsed = mLaneList.get(mLastIndex).getLaneItemUsed();
+                    index.setItemUsed(itemUsed);
+                    binderManager.startUpdate("scoreChanged", index);
+                    //Log.d(TAG, String.format("Last horse is changed ! %d", mLastIndex));
+                }
+
+                for (Lane lane : mLaneList) {
+                    if (lastHorse == c) {
+                        lane.setLastLane(true);
+                    } else {
+                        lane.setLastLane(false);
+                    }
+                    lane.update();
+                    if (mDebugTargetIndex == c)
+                        lane.debugLog();
+                    c++;
+                }
+
+                if (mArrivedTempList.size() > 0) {
+
+                    for (int d = 0; d < mArrivedTempList.size(); d++) {
+
+                        int randIdx = tools.getRangeInt(0, mArrivedTempList.size() - 1);
+
+                        mNotArrivedList.remove(mArrivedTempList.keyAt(randIdx));
+                        mArrivedList.add(mArrivedTempList.keyAt(randIdx));
+                        mArrivedTempList.remove(randIdx);
+                    }
+                }
+
+                mArrivedTempList.clear();
+
+            } else if (!mIsGameOver) {
+                mIsGameOver = true;
+                LastIndex index = new LastIndex(mArrivedList.get(mArrivedList.size() - 1));
                 boolean itemUsed = mLaneList.get(mLastIndex).getLaneItemUsed();
                 index.setItemUsed(itemUsed);
                 binderManager.startUpdate("scoreChanged", index);
-                //Log.d(TAG, String.format("Last horse is changed ! %d", mLastIndex));
-            }
+                Log.d(TAG, String.format("last lane is %d", mArrivedList.get(mArrivedList.size() - 1)));
 
-            for (Lane lane : mLaneList) {
-                if(lastHorse == c){
-                    lane.setLastLane(true);
-                } else {
-                    lane.setLastLane(false);
+                DialogManager dialogManager = new DialogManager(mContext);
+                StringBuilder stringBuilder = new StringBuilder();
+
+                for(int c = 0; c < mArrivedList.size(); c++){
+                    stringBuilder
+                            .append(String.format("[Rank %d] : %d", c + 1, mArrivedList.get(c)))
+                            .append("\n");
                 }
-                lane.update();
-                if(mDebugTargetIndex == c)
-                    lane.debugLog();
-                c++;
-            }
 
-        } else if(!mIsGameOver){
-            mIsGameOver = true;
-            LastIndex index = new LastIndex(mArrivedList.get(mArrivedList.size() - 1));
-            boolean itemUsed = mLaneList.get(mLastIndex).getLaneItemUsed();
-            index.setItemUsed(itemUsed);
-            binderManager.startUpdate("scoreChanged", index);
-            Log.d(TAG, String.format("last lane is %d", mArrivedList.get(mArrivedList.size() - 1)));
+                dialogManager.showResult(stringBuilder.toString(), new DialogManager.OnClickEvent() {
+                    @Override
+                    public void onClick() {
+                        binderManager.startUpdate("finish", "finish");
+                    }
+                });
+            }
         }
     }
 
     @Override
     public void draw(Canvas canvas){
 
-        for(Lane lane : mLaneList)
-            lane.draw(canvas);
+        if(mIsStart) {
+            for (Lane lane : mLaneList)
+                lane.draw(canvas);
+        }
     }
 
     @Override

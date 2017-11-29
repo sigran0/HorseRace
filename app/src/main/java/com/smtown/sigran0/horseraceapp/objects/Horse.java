@@ -23,6 +23,7 @@ public class Horse extends BaseObject {
     }
 
     private static final float MAX_SPEED = 20.0f;
+    private static final float MIN_SPEED = 2.0f;
     private static final int SPEED_SETTER = 512;    //  512 is best
     
     private static final String TAG = "fucking";
@@ -43,7 +44,7 @@ public class Horse extends BaseObject {
 
     private boolean mItemUsed;
     private State mState = State.Normal;
-    private int mBoosterCounter = 0;
+    private int mStateCounter = 0;
     private int mSecond = 0;
 
     public Horse(RectF rect, PointF point, int color, int number){
@@ -72,8 +73,8 @@ public class Horse extends BaseObject {
             mCurrentForce += mBaseSpeed * 10;
         }
 
-        if(mBaseSpeed < 2) {
-            mBaseSpeed = 2;
+        if(mBaseSpeed < MIN_SPEED) {
+            mBaseSpeed = MIN_SPEED;
         }
 
         if(!mIsLastHorse)
@@ -104,13 +105,18 @@ public class Horse extends BaseObject {
     }
 
     public void debugLog(){
-        Log.d(TAG, String.format("[%d] Position : (%.1f, %.1f), speed : %.1f, force : %.1f", mHorseNumber, mPosition.x, mPosition.y, mBaseSpeed, mCurrentForce));
+        //Log.d(TAG, String.format("[%d] Position : (%.1f, %.1f), speed : %.1f, force : %.1f", mHorseNumber, mPosition.x, mPosition.y, mBaseSpeed, mCurrentForce));
     }
 
     public void setFinish(){
         mCurrentForce = -99999;
         Log.d(TAG, String.format("[%d] Finished Position : (%.1f, %.1f), speed : %.1f, Rect : (%.1f, %.1f, %.1f, %.1f)", mHorseNumber, mPosition.x, mPosition.y, mBaseSpeed, mRect.left, mRect.top, mRect.right, mRect.bottom));
         update();
+    }
+
+    public void setSlow(){
+        mStateCounter += 2;
+        mState = State.Slow;
     }
 
     public void setItemUsed(boolean b){
@@ -128,7 +134,7 @@ public class Horse extends BaseObject {
         mHorseMaxForce = mHorseWeight * 10;
         mCurrentForce = tools.getRangeFloat(Constants.HORSE_MIN_WEIGHT * 10, mHorseMaxForce);
 
-        Log.d(TAG, String.format("Weight : " + mHorseWeight));
+        //Log.d(TAG, String.format("Weight : " + mHorseWeight));
 
         binderManager.bind("boost", new BinderManager.BinderInterface<Integer>() {
             @Override
@@ -136,7 +142,7 @@ public class Horse extends BaseObject {
 
                 if(data == mHorseNumber){
                     mItemUsed = true;
-                    mBoosterCounter = 2;
+                    mStateCounter = 3;
                     mState = State.Booster;
                 }
             }
@@ -149,10 +155,10 @@ public class Horse extends BaseObject {
 
         if(mState != State.Normal) {
 
-            if(mBoosterCounter > 0){
-                mBoosterCounter -= 1;
+            if(mStateCounter > 0){
+                mStateCounter -= 1;
 
-                if(mBoosterCounter <= 0){
+                if(mStateCounter <= 0){
                     mState = State.Normal;
                 }
             }
@@ -174,16 +180,19 @@ public class Horse extends BaseObject {
     @Override
     public void draw(Canvas canvas){
 
-        if(mState == State.Normal) {
-            mPaint.setColor(Color.BLACK);
-        } else if(mState == State.Booster) {
-            mPaint.setColor(Color.RED);
-        } else if(mState == State.Slow) {
-            mPaint.setColor(Color.DKGRAY);
-        }
+        if(canvas != null) {
 
-        canvas.drawRect(mRect, mPaint);
-        canvas.drawText(String.format("%.1f", mCurrentSpeed), mRect.centerX() - mRect.width() / 2, mRect.centerY(), mTextPaint);
+            if (mState == State.Normal) {
+                mPaint.setColor(Color.BLACK);
+            } else if (mState == State.Booster) {
+                mPaint.setColor(Color.RED);
+            } else if (mState == State.Slow) {
+                mPaint.setColor(Color.DKGRAY);
+            }
+
+            canvas.drawRect(mRect, mPaint);
+            canvas.drawText(String.format("%.1f", mCurrentSpeed), mRect.centerX() - mRect.width() / 2, mRect.centerY(), mTextPaint);
+        }
     }
 
     @Override

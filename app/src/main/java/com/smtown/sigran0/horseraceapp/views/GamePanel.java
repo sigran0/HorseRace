@@ -26,6 +26,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback{
     private boolean isViewAttached = false;
     private MyTools tools;
     private World mWorld;
+    private int mHorseSize;
 
     public GamePanel(Context conetxt){
         this(conetxt, null);
@@ -60,6 +61,14 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback{
         return panelSize;
     }
 
+    public void finish(){
+
+    }
+
+    public void setSize(int size){
+        mHorseSize = size;
+    }
+
     @Override
     public void surfaceChanged(SurfaceHolder holder, int format, int width, int height){
         Log.d(TAG, "surfaceChanged called");
@@ -77,7 +86,7 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback{
 
         Size panelSize = measurePanelSize();
 
-        mWorld = new World(getContext(), panelSize);
+        mWorld = new World(getContext(), panelSize, mHorseSize);
 
         setViewAttached(true);
     }
@@ -112,10 +121,12 @@ public class GamePanel extends SurfaceView implements SurfaceHolder.Callback{
     @Override
     public void draw(Canvas canvas){
         if(isViewAttached) {
-            super.draw(canvas);
-            canvas.drawColor(Color.WHITE);
+            if(canvas != null) {
+                super.draw(canvas);
+                canvas.drawColor(Color.WHITE);
 
-            mWorld.draw(canvas);
+                mWorld.draw(canvas);
+            }
         }
     }
 

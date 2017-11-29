@@ -97,16 +97,18 @@ public class Lane extends BaseObject {
 
     @Override
     public void draw(Canvas canvas){
-        canvas.drawRect(mRect, mPaint);
+        if(canvas != null) {
+            canvas.drawRect(mRect, mPaint);
 
-        mFinishLine.draw(canvas);
-        mHorse.draw(canvas);
+            mFinishLine.draw(canvas);
+            mHorse.draw(canvas);
 
-        for(int c = 0; c < mItemList.size(); c++){
-            int key = mItemList.keyAt(c);
-            Item item = mItemList.get(key);
+            for (int c = 0; c < mItemList.size(); c++) {
+                int key = mItemList.keyAt(c);
+                Item item = mItemList.get(key);
 
-            item.draw(canvas);
+                item.draw(canvas);
+            }
         }
     }
 
@@ -136,12 +138,25 @@ public class Lane extends BaseObject {
         }
     }
 
+    public void switchPosition(Lane target){
+
+        float myX = getCurrentHorseX();
+        float targetX = target.getCurrentHorseX();
+
+        setCurrentHorseX(targetX);
+        target.setCurrentHorseX(myX);
+    }
+
     public void debugLog(){
         mHorse.debugLog();
     }
 
     public float getCurrentHorseX(){
         return mHorse.mPosition.x;
+    }
+
+    public void setCurrentHorseX(float x){
+        mHorse.setPosition(x, mHorse.getPosition().y);
     }
 
     public boolean getArrived(){
@@ -158,6 +173,10 @@ public class Lane extends BaseObject {
 
     public void setLaneItemUsed(boolean b){
         mHorse.setItemUsed(b);
+    }
+
+    public void setSlow(){
+        mHorse.setSlow();
     }
 
     public boolean getLaneItemUsed(){

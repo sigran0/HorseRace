@@ -41,18 +41,19 @@ public class ButtonMenu extends LinearLayout {
 
         switch (v.getId()){
             case R.id.view_button_menu_bt_item1:{
-                binderManager.startUpdate("boost", lastLane);
-                setButton(true);
-                break;
-            }
-
-            case R.id.view_button_menu_bt_item2: {
                 binderManager.startUpdate("slow", lastLane);
                 setButton(true);
                 break;
             }
 
+            case R.id.view_button_menu_bt_item2: {
+                binderManager.startUpdate("boost", lastLane);
+                setButton(true);
+                break;
+            }
+
             case R.id.view_button_menu_bt_item3: {
+                binderManager.startUpdate("teleport", lastLane);
                 setButton(true);
             }
         }
