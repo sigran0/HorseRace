@@ -73,6 +73,14 @@ public class BinderManager {
         }
     }
 
+    public void unbind(@NonNull String key){
+        mBindList.get(key).clear();
+    }
+
+    public void removeAll(){
+        mBindList = new HashMap<>();
+    }
+
     public interface BinderInterface<T>{
         void update(T data);
     }

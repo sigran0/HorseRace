@@ -3,8 +3,11 @@ package com.smtown.sigran0.horseraceapp;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Button;
 import android.widget.NumberPicker;
+
+import com.smtown.sigran0.horseraceapp.managers.BinderManager;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -22,8 +25,12 @@ public class MainActivity extends Activity {
     void OnClickStart(){
         int size = numberPicker.getValue();
 
+        BinderManager.getInstance().removeAll();
+
         Intent intent = new Intent(this, GameActivity.class);
         intent.putExtra("size", size);
+
+        Log.d("fucking", String.format("size : %d", size));
 
         startActivity(intent);
     }

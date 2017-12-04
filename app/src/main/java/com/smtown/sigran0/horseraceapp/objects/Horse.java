@@ -80,7 +80,7 @@ public class Horse extends BaseObject {
         if(!mIsLastHorse)
             mCurrentSpeed = mBaseSpeed;
         else {
-            mCurrentSpeed = mBaseSpeed * 1.1f;
+            mCurrentSpeed = mBaseSpeed * 1.0f;
         }
 
         if(mState == State.Booster) {

@@ -50,6 +50,9 @@ public class World implements GameScene {
     private MyTools tools = MyTools.getInstance();
     private int mCurrentRanking = 1;
 
+    private int nextAvilityIndex = -1;
+    private int avilityType = -1;
+
     private BinderManager binderManager = BinderManager.getInstance();
 
     public World(Context context, Size panelSize, int horseSize){
@@ -85,7 +88,7 @@ public class World implements GameScene {
             public void onArrived(int laneNumber) {
                 Log.d(TAG, "Lane " + laneNumber + " is arrived!");
                 //mArrivedTempList.append(laneNumber, laneNumber);
-                mNotArrivedList.remove(laneNumber);
+                mNotArrivedList.remove(findNotArrivedIndex(laneNumber));
                 mArrivedList.add(laneNumber);
             }
         };
@@ -129,20 +132,30 @@ public class World implements GameScene {
         binderManager.bind("slow", new BinderManager.BinderInterface<Integer>() {
             @Override
             public void update(Integer data) {
-                Integer target = getRandomNotArrivedLane(data);
-                mLaneList.get(data).setLaneItemUsed(true);
-                mLaneList.get(target).setSlow();
+                nextAvilityIndex = data;
+                avilityType = 1;
             }
         });
 
         binderManager.bind("teleport", new BinderManager.BinderInterface<Integer>() {
             @Override
             public void update(Integer data) {
-                Integer target = getRandomNotArrivedLane(data);
-                mLaneList.get(data).setLaneItemUsed(true);
-                mLaneList.get(data).switchPosition(mLaneList.get(target));
+                nextAvilityIndex = data;
+                avilityType = 2;
             }
         });
+    }
+
+    private void avilitySlow(int index){
+        Integer target = getRandomNotArrivedLane(index);
+        mLaneList.get(index).setLaneItemUsed(true);
+        mLaneList.get(target).setSlow();
+    }
+
+    private void avilityTeleport(int index){
+        Integer target = getRandomNotArrivedLane(index);
+        mLaneList.get(index).setLaneItemUsed(true);
+        mLaneList.get(index).switchPosition(mLaneList.get(target));
     }
 
     private int getLastHorse(){
@@ -179,15 +192,40 @@ public class World implements GameScene {
 
     private Integer getRandomNotArrivedLane(int myIndex){
 
-        if(mNotArrivedList.size() < 0)
-            return null;
+        if(mNotArrivedList.size() <= 1)
+            return myIndex;
+
+        StringBuilder builder = new StringBuilder();
+        for(int c = 0; c < mNotArrivedList.size(); c++){
+            int key = mNotArrivedList.keyAt(c);
+            builder.append(mNotArrivedList.get(key))
+                    .append(", ");
+        }
+
+        Log.d(TAG, String.format("%s", builder.toString()));
         int randIndex = -1;
         do {
             Log.d(TAG, String.format("Not Arrived size : %d", mNotArrivedList.size()));
-            randIndex = tools.getRangeInt(0, mNotArrivedList.size() - 1);
+            int rand = tools.getRangeInt(0, mNotArrivedList.size() - 1);
+
+            //randIndex = findNotArrivedIndex(rand);
+            randIndex = mNotArrivedList.get(mNotArrivedList.keyAt(rand));
         } while(randIndex == myIndex);
 
-        return new Integer(randIndex);
+        return randIndex;
+    }
+
+    private int findNotArrivedIndex(int index){
+
+        for(int c = 0; c < mNotArrivedList.size(); c++){
+
+            int key = mNotArrivedList.keyAt(c);
+
+            if(mNotArrivedList.get(key) == index)
+                return c;
+        }
+
+        return -1;
     }
 
     @Override
@@ -204,7 +242,7 @@ public class World implements GameScene {
     @Override
     public void update(){
 
-        Log.d(TAG, String.format("Not Arrived : %d", mNotArrivedList.size()));
+        //Log.d(TAG, String.format("Not Arrived : %d", mNotArrivedList.size()));
 
         if(mIsStart) {
 
@@ -240,13 +278,26 @@ public class World implements GameScene {
 
                         int randIdx = tools.getRangeInt(0, mArrivedTempList.size() - 1);
 
-                        mNotArrivedList.remove(mArrivedTempList.keyAt(randIdx));
+                        mNotArrivedList.remove(findNotArrivedIndex(mArrivedTempList.keyAt(randIdx)));
                         mArrivedList.add(mArrivedTempList.keyAt(randIdx));
                         mArrivedTempList.remove(randIdx);
                     }
                 }
 
                 mArrivedTempList.clear();
+
+                if(nextAvilityIndex != -1){
+                    Log.d(TAG, String.format("fucking avility index : %d, type : %d", nextAvilityIndex, avilityType));
+
+                    if(avilityType == 1){
+                        avilitySlow(nextAvilityIndex);
+                    } else if(avilityType == 2){
+                        avilityTeleport(nextAvilityIndex);
+                    }
+
+                    nextAvilityIndex = -1;
+                    avilityType = -1;
+                }
 
             } else if (!mIsGameOver) {
                 mIsGameOver = true;
